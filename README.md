@@ -7,7 +7,7 @@ Using my software skills, i managed to build decent true control system with a f
 
 ## Personal experience in RC flight
 
-I have been flying RC since i was young (small copters and planes). I joined a club in early 2024 and practiced flying (LoS) on an Aero scout, built a balsa wood plane, and a depron pusher prop plane. I did not have experience with soldering. I'm a developer so the programming part was an issue for me.
+I have been flying RC since i was young (small copters and planes). I joined a club in early 2024 and practiced flying (LoS) on an Aero scout, built a balsa wood plane, and a depron pusher prop plane. I did not have experience with soldering. I'm a developer so the programming/soft configuration part was not an issue for me.
 
 ## Airframe
 
