@@ -171,7 +171,7 @@ import hid
 import time
 import pigpio
 import threading
-
+from datetime import datetime, timedelta
 class X:
 
    GAP=300
@@ -374,15 +374,37 @@ rudder_thread.start()
 print('Listening for data and generating PPM signal')
 update_ppm()
 
+glider_mode = False
+current_datetime_plus_5 = datetime.now() + timedelta(seconds=5)
+
 try:
     while True:
         # Process latest input data
         with input_lock:
             if latest_stick_data:
+                small_motor_stick = MAX_STICK_VALUE - (latest_stick_data[10] * 256 *2)
+                # Little motor stick can be negative, so we need to set it to 0
+                # to avoid any risk
+                if small_motor_stick < 0:
+                    small_motor_stick = 0
+                # Allow to switch to glider mode for 5 seconds
+                if datetime.now() < current_datetime_plus_5:
+                    glider_mode = latest_stick_data[20] > 0
+
+                left_lever = int.from_bytes(latest_stick_data[11:13], byteorder='little')
+                right_lever =int.from_bytes(latest_stick_data[13:15], byteorder='little')
+
+                # In glider mode with prefer flaps on left and we use
+                # the small motor stick to control the motor
+                if glider_mode:
+                    control_state['motor'] = small_motor_stick
+                    control_state['flap'] = left_lever
+                else:
+                    control_state['motor'] = left_lever
+                    control_state['flap'] = right_lever
+                # Standard for both glider and non glider mode
                 control_state['elevator'] = int.from_bytes(latest_stick_data[3:5], byteorder='little')
                 control_state['aileron'] = int.from_bytes(latest_stick_data[1:3], byteorder='little')
-                control_state['motor'] = int.from_bytes(latest_stick_data[11:13], byteorder='little')
-                control_state['flap'] = int.from_bytes(latest_stick_data[13:15], byteorder='little')
                 latest_stick_data = None  # Clear processed data
 
             if latest_rudder_data:
